@@ -1,0 +1,69 @@
+import os
+import time
+import random
+from threading import Thread
+from flask import Flask
+from instagrapi import Client
+
+# سيرفر وهمي لإبقاء الخدمة شغال على Render مجاناً
+app_web = Flask('')
+
+@app_web.route('/')
+def home():
+    return "Instagram Auto-Liker is running!"
+
+def run_web():
+    app_web.run(host='0.0.0.0', port=8080)
+
+# ---------------------------------------------------------
+# قائمة الحسابات (يمكنك إضافة أي عدد من الحسابات هنا)
+# ---------------------------------------------------------
+ACCOUNTS = [
+    {"username": "qooomem", "password": "suR_1212"},
+    {"username": "doomaBy", "password": "suR_1212"},
+    # {"username": "osuroam", "password": "suR_1212"},
+]
+
+# رابط المنشور الذي تريد وضع إعجابات عليه من كل الحسابات
+TARGET_POST_URL = "https://www.instagram.com/p/Cl94YuoKx45VmkTxeEFCdnJg-J9ZMAFV4LH7Z80/?igsh=MXNqNXJqMTRsN3hqcA=="
+
+def perform_likes():
+    # الانتظار دقيقة في البداية حتى يعمل السيرفر
+    time.sleep(60)
+    
+    print("🚀 بدء تنفيذ عملية الإعجابات...")
+
+    for acc in ACCOUNTS:
+        username = acc["username"]
+        password = acc["password"]
+        
+        cl = Client()
+        
+        # يمكنك إضافة بروكسي لكل حساب هنا إذا توفر لديك لاحقاً:
+        # cl.set_proxy("http://username:password@proxy_address:port")
+
+        try:
+            print(f"🔑 جاري تسجيل الدخول للحساب: {username}")
+            cl.login(username, password)
+            
+            # جلب معرف المنشور من الرابط
+            media_pk = cl.media_pk_from_url(TARGET_POST_URL)
+            
+            # وضع الإعجاب
+            cl.media_like(media_pk)
+            print(f"✅ تم وضع إعجاب بنجاح بواسطة: {username}")
+            
+            # فاصل زمني عشوائي بين الحسابات (بين 45 إلى 90 ثانية) لتجنب الحظر
+            delay = random.randint(45, 90)
+            print(f"⏳ الانتظار لمدة {delay} ثانية قبل الحساب التالي...")
+            time.sleep(delay)
+
+        except Exception as e:
+            print(f"❌ حدث خطأ في الحساب {username}: {str(e)}")
+
+if __name__ == '__main__':
+    # تشغيل سيرفر الويب في الخلفية
+    Thread(target=run_web).start()
+    
+    # تشغيل سكربت الإعجابات
+    perform_likes()
