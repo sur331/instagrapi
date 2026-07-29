@@ -19,9 +19,9 @@ def run_web():
 # قائمة الحسابات (يمكنك إضافة أي عدد من الحسابات هنا)
 # ---------------------------------------------------------
 ACCOUNTS = [
-    {"username": "qooomem", "password": "suR_1212"},
-    {"username": "doomaBy", "password": "suR_1212"},
-    # {"username": "osuroam", "password": "suR_1212"},
+    {"username": "xgooer", "password": "suR_1212"},
+    {"username": "adkanee", "password": "suR_1212"},
+    # {"username": "surnease", "password": "suR_1212"},
 ]
 
 # رابط المنشور الذي تريد وضع إعجابات عليه من كل الحسابات
