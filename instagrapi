@@ -25,7 +25,7 @@ ACCOUNTS = [
 ]
 
 # رابط المنشور الذي تريد وضع إعجابات عليه من كل الحسابات
-TARGET_POST_URL = "https://www.instagram.com/reel/DbaaMdINxVu/?igsh=MThqMWE3Y2JoaTA5ZQ=="
+TARGET_POST_URL = "https://www.instagram.com/p/DOinZICAsDH/?igsh=NHp2cXdmZGxhbmtw"
 
 def perform_likes():
     # الانتظار دقيقة في البداية حتى يعمل السيرفر
