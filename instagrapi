@@ -19,7 +19,7 @@ def run_web():
 # قائمة الحسابات (يمكنك إضافة أي عدد من الحسابات هنا)
 # ---------------------------------------------------------
 ACCOUNTS = [
-    {"username": "realestate_surr", "password": "suR_1212"},
+    {"username": "realestate_surr", "password": "omaN_1212"},
     {"username": "doomnisa", "password": "suR_1212"},
     # {"username": "lionkooan", "password": "suR_1212"},
 ]
