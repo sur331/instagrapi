@@ -19,13 +19,13 @@ def run_web():
 # قائمة الحسابات (يمكنك إضافة أي عدد من الحسابات هنا)
 # ---------------------------------------------------------
 ACCOUNTS = [
-    {"username": "alnidom", "password": "suR_1212"},
+    {"username": "realestate_surr", "password": "suR_1212"},
     {"username": "doomnisa", "password": "suR_1212"},
     # {"username": "lionkooan", "password": "suR_1212"},
 ]
 
 # رابط المنشور الذي تريد وضع إعجابات عليه من كل الحسابات
-TARGET_POST_URL = "https://www.instagram.com/p/CgZdVTcKcaw/?igsh=MXJkemZwZmRhZWNnMQ=="
+TARGET_POST_URL = "https://www.instagram.com/reel/DbaaMdINxVu/?igsh=MThqMWE3Y2JoaTA5ZQ=="
 
 def perform_likes():
     # الانتظار دقيقة في البداية حتى يعمل السيرفر
