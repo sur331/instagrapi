@@ -18,8 +18,8 @@ def run_web():
 
 # قائمة الحسابات المراد استخدامها
 ACCOUNTS = [
-    {"username": "realestate_surr", "password": "suR_1212"},
-    {"username": "surcityoman", "password": "suR_1212"},
+    {"username": "realestate_surr", "password": "omaN_1212"},
+    {"username": "surcityoman", "password": "omaN_1212"},
 ]
 
 # رابط المنشور المطلوب الإعجاب به
