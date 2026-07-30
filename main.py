@@ -21,7 +21,7 @@ ACCOUNTS = [
 ]
 
 # تنظيف الرابط من المعلمات الزائدة لضمان استخراج media_pk بنجاح
-TARGET_POST_URL = "https://www.instagram.com/p/CzdEaVco8ui/?igsh=bHppaXM4Z3RneWJz"
+TARGET_POST_URL = "https://www.instagram.com/reel/Daz0BYcICsP/?igsh=bnJ5c3lodTAzejVp"
 
 def perform_likes():
     time.sleep(10)
