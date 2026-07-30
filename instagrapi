@@ -12,23 +12,23 @@ def home():
     return "Instagram Auto-Liker is running active!"
 
 def run_web():
-    # Render بطلب استخدام المنفذ المحدد في البيئة أو 8080 كافتراضي
+    # طلب استخدام المنفذ المحدد في البيئة أو 8080 كافتراضي
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
 
 # قائمة الحسابات المراد استخدامها
 ACCOUNTS = [
-    {"username": "realestate_surr", "password": "omaN_1212"},
-    {"username": "surcityoman", "password": "omaN_1212"},
+    {"username": "realestate_surr", "password": "suR_1212"},
+    {"username": "surcityonan", "password": "suR_1212"},
 ]
 
 # رابط المنشور المطلوب الإعجاب به
 TARGET_POST_URL = "https://www.instagram.com/reel/DbaaMdINxVu/?igsh=MThqMWE3Y2JoaTA5ZQ=="
 
 def perform_likes():
-    # الانتظار لبضع ثوان لضمان بدء تشغيل Web Server
+    # الانتظار بضع ثوانٍ لضمان بدء تشغيل Web Server
     time.sleep(10)
-    print("🚀 بدء تنفيذ عملية الإعجابات...")
+    print("⏳ بدأ تنفيذ عملية الإعجابات...")
 
     for acc in ACCOUNTS:
         username = acc["username"]
@@ -39,7 +39,7 @@ def perform_likes():
 
         try:
             print(f"🔑 جاري تسجيل الدخول للحساب: {username}")
-            
+
             # محاولة تحميل الجلسة السابقة لتجنب حظر الدخول
             if os.path.exists(session_file):
                 cl.load_settings(session_file)
@@ -48,7 +48,7 @@ def perform_likes():
                 cl.login(username, password)
                 cl.dump_settings(session_file)
 
-            # جلب معرف المنشور من الرابط
+            # جلب معرف المنشور من الرابط (تم تصحيح اسم الدالة هنا)
             media_pk = cl.media_pk_from_url(TARGET_POST_URL)
 
             # وضع الإعجاب
@@ -66,5 +66,5 @@ if __name__ == "__main__":
     t = Thread(target=run_web)
     t.start()
 
-    # تشغيل مهمة الإعجاب
+    # بدء تنفيذ الإعجابات
     perform_likes()
