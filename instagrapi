@@ -23,7 +23,7 @@ ACCOUNTS = [
 ]
 
 # رابط المنشور المطلوب الإعجاب به
-TARGET_POST_URL = "https://www.instagram.com/reel/DbaaMdINxVu/?igsh=MThqMWE3Y2JoaTA5ZQ=="
+TARGET_POST_URL = "https://www.instagram.com/reel/DbNeUlUoKeq/?igsh=eWpoanZ6bTlqenUx"
 
 def perform_likes():
     # الانتظار لبضع ثوان لضمان بدء تشغيل Web Server
