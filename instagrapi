@@ -1,69 +1,70 @@
 import os
 import time
 import random
-from threading import Thread
 from flask import Flask
+from threading import Thread
 from instagrapi import Client
 
-# سيرفر وهمي لإبقاء الخدمة شغال على Render مجاناً
-app_web = Flask('')
+app = Flask(__name__)
 
-@app_web.route('/')
+@app.route('/')
 def home():
-    return "Instagram Auto-Liker is running!"
+    return "Instagram Auto-Liker is running active!"
 
 def run_web():
-    app_web.run(host='0.0.0.0', port=8080)
+    # Render بطلب استخدام المنفذ المحدد في البيئة أو 8080 كافتراضي
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
 
-# ---------------------------------------------------------
-# قائمة الحسابات (يمكنك إضافة أي عدد من الحسابات هنا)
-# ---------------------------------------------------------
+# قائمة الحسابات المراد استخدامها
 ACCOUNTS = [
     {"username": "realestate_surr", "password": "suR_1212"},
     {"username": "surcityoman", "password": "suR_1212"},
-    # {"username": "mmebgo", "password": "suR_1212"},
 ]
 
-# رابط المنشور الذي تريد وضع إعجابات عليه من كل الحسابات
-TARGET_POST_URL = "https://www.instagram.com/p/DOinZICAsDH/?igsh=NHp2cXdmZGxhbmtw"
+# رابط المنشور المطلوب الإعجاب به
+TARGET_POST_URL = "https://www.instagram.com/reel/DbaaMdINxVu/?igsh=MThqMWE3Y2JoaTA5ZQ=="
 
 def perform_likes():
-    # الانتظار دقيقة في البداية حتى يعمل السيرفر
-    time.sleep(60)
-    
+    # الانتظار لبضع ثوان لضمان بدء تشغيل Web Server
+    time.sleep(10)
     print("🚀 بدء تنفيذ عملية الإعجابات...")
 
     for acc in ACCOUNTS:
         username = acc["username"]
         password = acc["password"]
-        
+
         cl = Client()
-        
-        # يمكنك إضافة بروكسي لكل حساب هنا إذا توفر لديك لاحقاً:
-        # cl.set_proxy("http://username:password@proxy_address:port")
+        session_file = f"session_{username}.json"
 
         try:
             print(f"🔑 جاري تسجيل الدخول للحساب: {username}")
-            cl.login(username, password)
             
+            # محاولة تحميل الجلسة السابقة لتجنب حظر الدخول
+            if os.path.exists(session_file):
+                cl.load_settings(session_file)
+                cl.login(username, password)
+            else:
+                cl.login(username, password)
+                cl.dump_settings(session_file)
+
             # جلب معرف المنشور من الرابط
             media_pk = cl.media_pk_from_url(TARGET_POST_URL)
-            
+
             # وضع الإعجاب
             cl.media_like(media_pk)
             print(f"✅ تم وضع إعجاب بنجاح بواسطة: {username}")
-            
-            # فاصل زمني عشوائي بين الحسابات (بين 45 إلى 90 ثانية) لتجنب الحظر
-            delay = random.randint(45, 90)
-            print(f"⏳ الانتظار لمدة {delay} ثانية قبل الحساب التالي...")
-            time.sleep(delay)
 
         except Exception as e:
-            print(f"❌ حدث خطأ في الحساب {username}: {str(e)}")
+            print(f"❌ حدث خطأ أثناء معالجة الحساب {username}: {e}")
 
-if __name__ == '__main__':
-    # تشغيل سيرفر الويب في الخلفية
-    Thread(target=run_web).start()
-    
-    # تشغيل سكربت الإعجابات
+        # انتظار عشوائي بين الحسابات لتجنب كشف البوت (بين 5 إلى 15 ثانية)
+        time.sleep(random.randint(5, 15))
+
+if __name__ == "__main__":
+    # تشغيل خادم Flask في مسار منفصل (Thread)
+    t = Thread(target=run_web)
+    t.start()
+
+    # تشغيل مهمة الإعجاب
     perform_likes()
