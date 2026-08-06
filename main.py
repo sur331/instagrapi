@@ -9,15 +9,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Instagram Auto-Liker (Cookies Mode) is active!"
+    return "Instagram Auto-Liker Status: Active"
 
 def run_web():
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
 
-# ---------------------------------------------------------
-# قائمة الحسابات الثلاثة بالكوكيز المدمجة
-# ---------------------------------------------------------
 ACCOUNTS_COOKIES = [
     {
         "name": "Account 1 (57673072874)",
@@ -33,36 +30,40 @@ ACCOUNTS_COOKIES = [
     }
 ]
 
-# رابط المنشور أو الريلز المستهدف
-TARGET_POST_URL = "https://www.instagram.com/reel/Cogh86CqESU/?igsh=MTZlZzZncnJ4MnY0bg=="
+# رابط المنشور
+TARGET_POST_URL = "https://www.instagram.com/p/CgZa8drK52K/?igsh=bmYxOGdreXV0MGN2"
 
 def extract_csrf_token(cookie_str):
-    """استخراج رمز csrftoken من نص الكوكي تلقائياً"""
     for item in cookie_str.split(";"):
         if "csrftoken=" in item:
             return item.split("=")[1].strip()
     return ""
 
 def get_media_id_from_url(url):
-    """جلب ID المنشور عبر API الرسمية من الرابط"""
     try:
-        req = requests.get(f"https://api.instagram.com/oembed/?url={url}")
+        # محاولة جلب ID المنشور من API oembed
+        clean_url = url.split("?")[0]
+        req = requests.get(f"https://api.instagram.com/oembed/?url={clean_url}")
         if req.status_code == 200:
             return req.json().get("media_id")
     except Exception as e:
-        print(f"❌ خطأ في الحصول على ID المنشور: {e}")
+        print(f"❌ خطأ في جلب Media ID: {e}")
     return None
 
 def perform_likes():
-    time.sleep(5)
-    print("⏳ جاري بدء العملية...")
+    time.sleep(3)
+    print("⏳ جاري الفحص وتنفيد الإعجابات...")
 
     media_id = get_media_id_from_url(TARGET_POST_URL)
+    
+    # إذا فشلت الأداة في استخراج الـ Media ID التلقائي، يمكنك وضعه يدوياً هنا
     if not media_id:
-        print("❌ لم يتم العثور على ID المنشور! تأكد من صحة الرابط.")
+        print("⚠️ لم يتم جلب Media ID تلقائياً، جاري محاولة استخدام الرمز المباشر...")
+        # يمكن استخراج Media ID من الرابط إذا لزم الأمر
+        print("❌ يرجي التاكد من أن المنشور عام (Public) وليس خاصاً.")
         return
 
-    print(f"🆔 معرف المنشور (Media ID): {media_id}\n")
+    print(f"🆔 معرف المنشور المستهدف: {media_id}\n")
 
     for acc in ACCOUNTS_COOKIES:
         account_name = acc["name"]
@@ -72,8 +73,10 @@ def perform_likes():
         like_url = f"https://www.instagram.com/web/likes/{media_id}/like/"
 
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
             "X-CSRFToken": csrf_token,
+            "X-IG-App-ID": "936619743392459",  # مهم جداً لقبول الطلب في ويب إنستغرام
+            "X-Requested-With": "XMLHttpRequest",
             "Content-Type": "application/x-www-form-urlencoded",
             "Cookie": cookie_data,
             "Origin": "https://www.instagram.com",
@@ -81,21 +84,21 @@ def perform_likes():
         }
 
         try:
-            print(f"🔑 إرسال الإعجاب من [{account_name}]...")
+            print(f"🔑 محاولة التفاعل بواسطة [{account_name}]...")
             response = requests.post(like_url, headers=headers)
+            
+            print(f"📡 رمز استجابة السيرفر (Status Code): {response.status_code}")
+            print(f"💬 محتوى الرد: {response.text}")
 
-            if response.status_code == 200 and response.json().get("status") == "ok":
-                print(f"✅ تم وضع الإعجاب بنجاح بواسطة [{account_name}]")
+            if response.status_code == 200 and '"status":"ok"' in response.text.lower():
+                print(f"✅ نجاح! تم وصول الإعجاب من [{account_name}]\n")
             else:
-                print(f"❌ فشل وضع الإعجاب بواسطة [{account_name}] - الاستجابة: {response.text}")
+                print(f"❌ لم يصل الإعجاب من [{account_name}]. انظر محتوى الرد أعلاه للتفاصيل.\n")
 
         except Exception as e:
-            print(f"❌ خطأ أثاء معالجة [{account_name}]: {e}")
+            print(f"❌ خطأ أثناء الإرسال: {e}\n")
 
-        # وقت انتظار عشوائي بين 15 إلى 30 ثانية لتجنب الحظر
-        wait_time = random.randint(15, 30)
-        print(f"⏸️ انتظار لمدة {wait_time} ثانية قبل الانتقال للحساب التالي...\n")
-        time.sleep(wait_time)
+        time.sleep(random.randint(10, 20))
 
 if __name__ == "__main__":
     t = Thread(target=run_web)
