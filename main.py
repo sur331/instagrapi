@@ -34,7 +34,7 @@ ACCOUNTS_COOKIES = [
 ]
 
 # رابط المنشور أو الريلز المستهدف
-TARGET_POST_URL = "https://www.instagram.com/p/CgZa8drK52K/?igsh=bmYxOGdreXV0MGN2"
+TARGET_POST_URL = "https://www.instagram.com/reel/Cogh86CqESU/?igsh=MTZlZzZncnJ4MnY0bg=="
 
 def extract_csrf_token(cookie_str):
     """استخراج رمز csrftoken من نص الكوكي تلقائياً"""
