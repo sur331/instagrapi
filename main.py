@@ -24,7 +24,7 @@ threading.Thread(target=run_flask, daemon=True).start()
 # ======================================================
 # 2. إعدادات التوكن والجلسات (Sessions) للحسابات الـ 4
 # ======================================================
-TELEGRAM_BOT_TOKEN = "8968135906:AAHHOKLFvBXg7KQJD67UHGcvbtYkyO8h4Hc"
+TELEGRAM_BOT_TOKEN = "8968135906:AAHHOKLfvBXg7KQJD67UHGcvbtYkyO8h4Hc"
 
 INSTAGRAM_SESSIONS = [
     {
