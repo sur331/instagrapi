@@ -1,29 +1,43 @@
+import os
 import time
 import random
+import threading
+from flask import Flask
 import telebot
 from instagrapi import Client
 
 # ======================================================
+# 0. خادم ويب وهمي لإبقاء Render مجانياً وبدون إغلاق
+# ======================================================
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running fine!"
+
+def run_flask():
+    # Render يمرر المنفذ عبر متغير البيئة PORT تلقائياً
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
+
+# تشغيل خادم الويب في مسار مستقل (Thread)
+threading.Thread(target=run_flask, daemon=True).start()
+
+# ======================================================
 # 1. الإعدادات والبيانات
 # ======================================================
+TELEGRAM_BOT_TOKEN = "8968135906:AAHHOKLFvBXg7KQJD67UHGcvbtYkyO8h4Hc"
 
-# ضع التوكن الخاص ببوت تليجرام هنا
-TELEGRAM_BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN_HERE"
-
-# قائمة الحسابات (قم بتعديل اسم المستخدم وكلمة المرور لكل حساب)
 INSTAGRAM_ACCOUNTS = [
     {"username": "oiitaop", "password": "suR_1212"},
-    {"username": "omanialfi", "password": "suR_1212"},
-    {"username": "foofyooe", "password": "suR_1212"},
+    {"username": "omanianfi", "password": "suR_1212"},
 ]
 
-# تهيئة البوت
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
 # ======================================================
-# 2. أداء الأوامر والرسائل
+# 2. الأوامر والرسائل
 # ======================================================
-
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
     welcome_text = """أهلاً بك في بوت الإعجابات التلقائية!
@@ -31,21 +45,17 @@ def send_welcome(message):
 قم بإرسال رابط منشور إنستغرام للبدء في تنفيذ الإعجابات من حساباتك المجهزة.
 
 مثال للرابط:
-https://www.instagram.com/p/CgZa8drK52K/?igsh=bmYxOGdreXV0MGN2""
-
+https://www.instagram.com/p/CgZa8drK52K/?igsh=bmYxOGdreXV0MGN2"""
     bot.reply_to(message, welcome_text)
-
 
 @bot.message_handler(func=lambda message: True)
 def process_likes(message):
     post_url = message.text.strip()
 
-    # التحقق من صحة الرابط
     if "instagram.com" not in post_url:
         bot.reply_to(message, "خطأ: يرجى إرسال رابط منشور إنستغرام صحيح.")
         return
 
-    # إرسال رسالة التعديل التراكمية
     status_msg = bot.reply_to(message, "⏳ جاري بدء عملية الإعجابات...")
 
     success_count = 0
@@ -57,31 +67,24 @@ def process_likes(message):
         password = acc["password"]
 
         try:
-            # تحديث الحالة في تليجرام
             bot.edit_message_text(
                 f"🔄 [{idx}/{total_accounts}] جاري الإعجاب عبر الحساب: @{username}",
                 chat_id=message.chat.id,
                 message_id=status_msg.message_id
             )
 
-            # تسجيل الدخول وتنفيذ الإعجاب
             cl = Client()
             cl.login(username, password)
-
             media_pk = cl.media_pk_from_url(post_url)
             cl.media_like(media_pk)
 
             success_count += 1
-
-            # فاصل زمني عشوائي من 10 إلى 15 ثانية
-            delay = random.randint(10, 15)
-            time.sleep(delay)
+            time.sleep(random.randint(10, 15))
 
         except Exception as e:
             fail_count += 1
             print(f"[Error] الحساب {username} فشل: {e}")
 
-    # التقرير النهائي
     report = f"""اكتملت العملية!
 
 إعجابات ناجحة: {success_count}
