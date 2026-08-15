@@ -37,7 +37,7 @@ threading.Thread(target=run_flask, daemon=True).start()
 # 3. الإعدادات وقائمة الـ 30 كوكيز / الجلسات
 # ======================================================
 # ضع توكن بوت التلغرام الخاص بك هنا (أو استدعائه من متغيرات البيئة)
-TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "ضغ_توكن_البوت_هنا")
+TELEGRAM_BOT_TOKEN = os.environ.get("8968135906:AAHHOKLfvBXg7KQJD67UHGcvbtYkyO8h4Hc", "ضغ_توكن_البوت_هنا")
 
 # ضع الـ 30 كوكيز أو الـ sessionid هنا بين التنصيص
 # يمكنك وضع الكوكيز كاملة أو الـ sessionid فقط وسيتكفل الكود باستخراجه
