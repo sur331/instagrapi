@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Bot is active!"
+    return "Bot is running Diagnostic Mode!"
 
 def run_flask():
     port = int(os.environ.get("PORT", 8080))
@@ -61,7 +61,7 @@ RAW_SESSIONS = [
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
 # ======================================================
-# 3. معالجة الإعجابات
+# 3. معالجة الإعجابات مع كشف الأخطاء Detailed Errors
 # ======================================================
 @bot.message_handler(commands=['start'])
 def start_cmd(message):
@@ -75,43 +75,50 @@ def process_likes(message):
         bot.reply_to(message, "⚠️ يرجى إرسال رابط منشور إنستغرام صحيح فقط.")
         return
 
-    status_msg = bot.reply_to(message, "⏳ جاري بدء تنفيذ الإعجابات...")
+    status_msg = bot.reply_to(message, "⏳ جاري تنفيذ الإعجابات وتشخيص الجلسات...")
 
     success_count = 0
     fail_count = 0
     total = len(RAW_SESSIONS)
+    failed_logs = []
 
     for idx, raw_session in enumerate(RAW_SESSIONS, 1):
-        # فك التشفير وتنظيف الـ sessionid
         clean_session = urllib.parse.unquote(raw_session).strip()
 
         try:
             bot.edit_message_text(
-                f"🔄 [{idx}/{total}] جاري الإعجاب عبر الحساب رقم #{idx}...",
+                f"🔄 [{idx}/{total}] جاري التجربة على الحساب رقم #{idx}...",
                 chat_id=message.chat.id,
                 message_id=status_msg.message_id
             )
 
             cl = Client()
+            # تقليل البصمة الرقمية للحد من الكشف
+            cl.set_user_agent("Instagram 269.0.0.18.75 Android (26/8.0.0; 480dpi; 1080x1920; Xiaomi; Redmi Note 5; whyred; qcom; en_US; 314665258)")
             cl.login_by_sessionid(clean_session)
             
             media_pk = cl.media_pk_from_url(post_url)
             cl.media_like(media_pk)
 
             success_count += 1
-            # فاصل زمني آمن بين 10 إلى 18 ثانية لتجاوز حظر الـ IP
-            time.sleep(random.randint(10, 18))
+            time.sleep(random.randint(5, 10))
 
         except Exception as e:
             fail_count += 1
-            print(f"[Error] الحساب #{idx} فشل: {e}")
-            time.sleep(3)
+            err_msg = str(e).splitlines()[0] if str(e) else "Unknown Error"
+            failed_logs.append(f"حساب #{idx}: {err_msg[:30]}")
+            time.sleep(2)
 
-    report = f"""✅ **اكتملت العملية!**
+    # التقرير النهائي
+    report = f"✅ **نتيجة المحاولة:**\n\n"
+    report += f"❤️ ناجح: {success_count}\n"
+    report += f"❌ فاشل: {fail_count}\n"
+    report += f"👥 الإجمالي: {total}\n\n"
 
-❤️ إعجابات ناجحة: {success_count}
-❌ إعجابات فاشلة: {fail_count}
-👥 إجمالي الحسابات: {total}"""
+    if failed_logs:
+        report += "⚠️ **عينة من أسباب الفشل:**\n"
+        for log in failed_logs[:5]:  # عرض أول 5 أخطاء فقط لمعرفة السبب
+            report += f"• {log}\n"
 
     bot.send_message(message.chat.id, report, parse_mode="Markdown")
 
