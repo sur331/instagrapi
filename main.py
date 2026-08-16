@@ -13,7 +13,7 @@ FILE_URL = os.getenv('ACCOUNTS_URL')
 if not BOT_TOKEN or not FILE_URL:
     raise ValueError("❌ خطأ: لم يتم العثور على TELEGRAM_BOT_TOKEN أو ACCOUNTS_URL في إعدادات البيئة!")
 
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = telebot.TeleBot(8968135906:AAHHOKLfvBXg7KQJD67UHGcvbtYkyO8h4Hc)
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
