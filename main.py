@@ -5,76 +5,60 @@ import requests
 import telebot
 from instagrapi import Client
 
-# 1. جلب البيانات السرية من البيئة (Render Environment Variables)
-# 1. جلب البيانات من إعدادات البيئة (الأسماء فقط)
+# جلب البيانات تلقائياً من إعدادات البيئة (Render Environment Variables)
 BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 FILE_URL = os.getenv('ACCOUNTS_URL')
 
-# التأكد من وجود البيانات
+# التحقق من وجود المفاتيح في Render
 if not BOT_TOKEN or not FILE_URL:
-    raise ValueError("خطأ: لم يتم العثور على TELEGRAM_BOT_TOKEN أو ACCOUNTS_URL في إعدادات البيئة!")
+    raise ValueError("❌ خطأ: يرجى التأكد من إضافة TELEGRAM_BOT_TOKEN و ACCOUNTS_URL في إعدادات Render!")
 
-# 2. تعريف البوت باستخدام المتغير
 bot = telebot.TeleBot(BOT_TOKEN)
 
-    bot.reply_to(
-        message, 
-        "مرحباً بك! 👋\nأرسل لي رابط منشور أنستقرام لبدء تنفيذ اللايكات من الحسابات الـ 35."
-    )
+@bot.message_handler(commands=['start', 'help'])
+def send_welcome(message):
+    bot.reply_to(message, "مرحباً بك! 👋\nأرسل لي رابط منشور أنستقرام لبدء تنفيذ اللايكات.")
 
 @bot.message_handler(func=lambda message: "instagram.com" in message.text)
 def process_likes(message):
     media_url = message.text.strip()
-    bot.reply_to(message, "⏳ جاري جلب الحسابات وبدء تنفيذ اللايكات...")
+    bot.reply_to(message, "⏳ جاري بدء العملية...")
 
-    # 2. قراءة ملف الحسابات من الرابط المخفي
     try:
         response = requests.get(FILE_URL)
         accounts = response.json()
     except Exception as e:
-        bot.send_message(message.chat.id, f"❌ خطأ في قراءة ملف الحسابات: {e}")
+        bot.send_message(message.chat.id, f"❌ خطأ في قراءة رابط الحسابات: {e}")
         return
 
     success_count = 0
     fail_count = 0
-    total_accounts = len(accounts)
+    total = len(accounts)
 
-    # 3. المرور على الحسابات وتنفيذ العمليات
     for index, acc in enumerate(accounts, 1):
         cl = Client()
         try:
-            # تسجيل الدخول المباشر
             cl.login(acc['username'], acc['password'])
-            
-            # جلب معرف المنشور وعمل لايك
             media_id = cl.media_id(cl.media_pk_from_url(media_url))
             cl.media_like(media_id)
             
             success_count += 1
-            print(f"[{index}/{total_accounts}] تم بنجاح: {acc['username']}")
-            
+            print(f"[{index}/{total}] تم: {acc['username']}")
         except Exception as e:
             fail_count += 1
-            print(f"[{index}/{total_accounts}] فشل الحساب {acc['username']}: {e}")
+            print(f"[{index}/{total}] فشل: {acc['username']}")
 
-        # فاصل زمني عشوائي لحماية الحسابات (من 45 إلى 90 ثانية)
+        # فاصل زمني لتجنب الحظر
         time.sleep(random.randint(45, 90))
         
-        # استراحة كل 5 حسابات لتفادي الحظر
-        if index % 5 == 0 and index != total_accounts:
-            print("استراحة لمدة 5 دقائق لحماية الحسابات...")
+        # استراحة كل 5 حسابات
+        if index % 5 == 0 and index != total:
             time.sleep(300)
 
-    # 4. إرسال التقرير النهائي على تليجرام
-    report = (
-        f"✅ **اكتملت العملية!**\n\n"
-        f"👍 نجاح: {success_count}\n"
-        f"❌ فشل: {fail_count}\n"
-        f"📊 الإجمالي: {total_accounts}"
-    )
+    # تقرير النهاية
+    report = f"✅ اكتملت العملية!\n\n👍 نجاح: {success_count}\n❌ فشل: {fail_count}\n📊 الإجمالي: {total}"
     bot.send_message(message.chat.id, report)
 
-# تشغيل البوت باستمرار
 if __name__ == "__main__":
-    print("🤖 البوت يعمل الان بانتظار الأوامر...")
+    print("🤖 البوت يعمل الآن...")
     bot.polling(non_stop=True)
