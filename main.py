@@ -6,17 +6,17 @@ import telebot
 from instagrapi import Client
 
 # 1. جلب البيانات السرية من البيئة (Render Environment Variables)
-BOT_TOKEN = os.getenv('8968135906:AAHHOKLfvBXg7KQJD67UHGcvbtYkyO8h4Hc')
-FILE_URL = os.getenv('https://gist.githubusercontent.com/sur331/2d7ca94bd001275c2de2e21cd280a72a/raw/c95c5deab8c0a580c36d3720d99a84c3d2b58f10/gistfile1.txt')
+# 1. جلب البيانات من إعدادات البيئة (الأسماء فقط)
+BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+FILE_URL = os.getenv('ACCOUNTS_URL')
 
-# التأكد من وجود البيانات السرية
+# التأكد من وجود البيانات
 if not BOT_TOKEN or not FILE_URL:
-    raise ValueError("❌ خطأ: لم يتم العثور على TELEGRAM_BOT_TOKEN أو ACCOUNTS_URL في إعدادات البيئة!")
+    raise ValueError("خطأ: لم يتم العثور على TELEGRAM_BOT_TOKEN أو ACCOUNTS_URL في إعدادات البيئة!")
 
-bot = telebot.TeleBot(8968135906:AAHHOKLfvBXg7KQJD67UHGcvbtYkyO8h4Hc)
+# 2. تعريف البوت باستخدام المتغير
+bot = telebot.TeleBot(BOT_TOKEN)
 
-@bot.message_handler(commands=['start', 'help'])
-def send_welcome(message):
     bot.reply_to(
         message, 
         "مرحباً بك! 👋\nأرسل لي رابط منشور أنستقرام لبدء تنفيذ اللايكات من الحسابات الـ 35."
