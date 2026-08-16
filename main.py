@@ -6,8 +6,8 @@ import telebot
 from instagrapi import Client
 
 # 1. جلب البيانات السرية من البيئة (Render Environment Variables)
-BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-FILE_URL = os.getenv('ACCOUNTS_URL')
+BOT_TOKEN = os.getenv('8968135906:AAHHOKLfvBXg7KQJD67UHGcvbtYkyO8h4Hc')
+FILE_URL = os.getenv('https://gist.githubusercontent.com/sur331/2d7ca94bd001275c2de2e21cd280a72a/raw/c95c5deab8c0a580c36d3720d99a84c3d2b58f10/gistfile1.txt')
 
 # التأكد من وجود البيانات السرية
 if not BOT_TOKEN or not FILE_URL:
