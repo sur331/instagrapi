@@ -34,7 +34,7 @@ threading.Thread(target=run_flask, daemon=True).start()
 # =========================================================
 # 3. الإعدادات وقائمة 33 كوكيز
 # =========================================================
-TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "ضع_التوكين_هنا")
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8968135906:AAHHOKLfvBXg7KQJD67UHGcvbtYkyO8h4Hc")
 
 # ضع الـ 33 Session ID الخاصة بحساباتك هنا
 INSTAGRAM_COOKIES = [
