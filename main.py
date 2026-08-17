@@ -37,7 +37,7 @@ threading.Thread(target=run_flask, daemon=True).start()
 # =========================================================
 # 3. الإعدادات وتحديد الكوكيز (3 حسابات)
 # =========================================================
-TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "ضع_توكن_البوت_هنا")
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8968135906:AAHHOKLfvBXg7KQJD67UHGcvbtYkyO8h4Hc")
 
 # قائمة الكوكيز الخاصة بـ 3 حسابات إنستغرام
 INSTAGRAM_COOKIES = [
