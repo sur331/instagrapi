@@ -126,7 +126,7 @@ def send_likes_job(post_url, chat_id):
 
         # تطبيق المهلة الزمنية بين الحسابات
         if idx < total_accounts:
-            delay = random.randint(15, 30)
+            delay = random.randint(1, 10)
             logger.info(f"انتظار {delay} ثانية...")
             time.sleep(delay)
 
@@ -143,7 +143,7 @@ def send_likes_job(post_url, chat_id):
 # =========================================================
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    bot.reply_to(message, "مرحباً! أرسل رابط المنشور لعمل الإعجابات عبر الـ 33 حساباً.")
+    bot.reply_to(message, "مرحباً! أرسل رابط المنشور لعمل الإعجابات عبر الـ 32 حساباً.")
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
