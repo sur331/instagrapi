@@ -126,7 +126,7 @@ def send_likes_job(post_url, chat_id):
 
         # تطبيق المهلة الزمنية بين الحسابات
         if idx < total_accounts:
-            delay = random.randint(1, 10)
+            delay = random.randint(10, 20)
             logger.info(f"انتظار {delay} ثانية...")
             time.sleep(delay)
 
